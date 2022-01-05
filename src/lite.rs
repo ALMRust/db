@@ -12,7 +12,7 @@ pub fn establish_connection() -> SqliteConnectionManager {
     }
 }
 
-fn add_foreign_keys(conn: &mut Connection) {
+pub fn add_foreign_keys(conn: &mut Connection) {
     let res = conn.pragma_update(Option::from(Main), "foreign_keys", "ON");
     if let Err(e) = res {
         panic!("{}", e);
