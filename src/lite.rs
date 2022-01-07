@@ -4,6 +4,7 @@ use r2d2::Pool;
 use std::env;
 use rusqlite::DatabaseName::Main;
 
+#[must_use]
 pub fn establish_connection() -> SqliteConnectionManager {
     let db_name = env::var("DB_NAME");
     match db_name {
@@ -19,12 +20,14 @@ pub fn add_foreign_keys(conn: &mut Connection) {
     }
 }
 
+#[must_use]
 pub fn create_pool(manager: SqliteConnectionManager) -> Pool<SqliteConnectionManager> {
     #[derive(Debug)]
     struct SqliteForeignKey {}
     impl r2d2::CustomizeConnection::<Connection, rusqlite::Error> for SqliteForeignKey {
         fn on_acquire(&self, conn: &mut Connection) -> Result<(), rusqlite::Error> {
-            Ok(add_foreign_keys(conn))
+            add_foreign_keys(conn);
+            Ok(())
         }
     }
 
